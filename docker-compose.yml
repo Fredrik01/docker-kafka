@@ -1,0 +1,47 @@
+version: '3.6'
+
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - 'zookeeper_data:/bitnami'
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    depends_on:
+      - zookeeper
+    ports:
+      - '9092:9092'
+    volumes:
+      - 'kafka_data:/bitnami'
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+
+  producer:
+    image: node:10
+    depends_on:
+      - kafka
+    volumes:
+      - '.:/app'
+    working_dir: '/app'
+    command: node producer.js
+
+  consumer:
+    image: node:10
+    depends_on:
+      - kafka
+    volumes:
+      - '.:/app'
+    working_dir: '/app'
+    command: node consumer.js
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
