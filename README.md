@@ -1,4 +1,4 @@
-# docker-kafka
+# kafka-playground
 
 Super easy way to setup and run a Kafka consumer/producer
 
