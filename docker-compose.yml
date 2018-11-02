@@ -1,6 +1,7 @@
 version: '3.6'
 
 services:
+
   zookeeper:
     image: 'bitnami/zookeeper:latest'
     ports:
@@ -23,21 +24,44 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
 
   producer:
-    image: node:10
+    build: .
     depends_on:
       - kafka
     volumes:
-      - '.:/app'
-    working_dir: '/app'
+      - './producer.js:/app/producer.js'
     command: node producer.js
 
-  consumer:
-    image: node:10
+  consumer-1:
+    build: .
     depends_on:
       - kafka
     volumes:
-      - '.:/app'
-    working_dir: '/app'
+      - './consumer.js:/app/consumer.js'
+    environment:
+      GROUP_ID: consumer-1
+      CLIENT_ID: consumer-1
+    command: node consumer.js
+
+  consumer-2:
+    build: .
+    depends_on:
+      - kafka
+    volumes:
+      - './consumer.js:/app/consumer.js'
+    environment:
+      GROUP_ID: consumer-2
+      CLIENT_ID: consumer-2
+    command: node consumer.js
+
+  consumer-3:
+    build: .
+    depends_on:
+      - kafka
+    volumes:
+      - './consumer.js:/app/consumer.js'
+    environment:
+      GROUP_ID: consumer-3
+      CLIENT_ID: consumer-3
     command: node consumer.js
 
 volumes:

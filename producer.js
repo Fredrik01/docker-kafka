@@ -2,6 +2,7 @@ const Kafka = require('node-rdkafka');
 
 let producer = new Kafka.Producer({
   // 'debug' : 'all',
+  'client.id': 'producer-1',
   'metadata.broker.list': 'kafka:9092',
   'dr_cb': true  // Delivery report
 });
@@ -20,7 +21,7 @@ producer.on('event.error', function(err) {
 });
 
 let counter = 0;
-let maxMessages = 10;
+let maxMessages = 100000;
 
 producer.on('delivery-report', function(err, report) {
   console.log('delivery-report: ' + JSON.stringify(report));
@@ -29,6 +30,9 @@ producer.on('delivery-report', function(err, report) {
 
 producer.on('ready', function(arg) {
   console.log('Producer ready. ' + JSON.stringify(arg));
+
+  // let message = Buffer.from('Message!');
+  // producer.produce(topicName, -1, message, 0);
 
   for (let i = 0; i < maxMessages; i++) {
     let value = Buffer.from('value-' +i);
